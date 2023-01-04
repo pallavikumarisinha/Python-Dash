@@ -1,0 +1,50 @@
+
+!pip install jupyter-dash
+from jupyter_dash import JupyterDash
+from dash import Dash, dash_table, dcc, html, Input, Output, callback,State
+import pandas as pd
+
+from jupyter_dash import JupyterDash
+from dash import Dash, dash_table, dcc, html, Input, Output, State
+import pandas as pd
+
+ds = pd.DataFrame({'Name': ['Ram', 'Shyam', 'Mina', 'Sita', 'Geeta'],
+                   'Gender': ['Male', 'Male', 'Female', 'Female', 'Female'],
+                   'Degree': ['Masters', 'Graduate', 'Graduate', 'Masters', 'Graduate'],
+                   'Marks': [27, 23, 21, 23, 24]})
+
+app = JupyterDash(__name__)
+student_name = ds.Name.unique().tolist()
+
+app.layout = html.Div(children=[
+    html.H1(children='Students details', style={'padding-left': '30%', 'padding-top': '5px'}),
+
+    dcc.Dropdown(
+        id='dropdown_name',
+        options=[{'label': i, 'value': i} for i in student_name],
+        placeholder="-Select a Student-",
+        value=student_name, multi=True, clearable=True
+    ),
+    html.Button(id='my-button', n_clicks=0, children="Submit"),
+
+    dash_table.DataTable(
+        id='datatable-student',
+        columns=[
+            {"name": i, "id": i, "deletable": False, "selectable": True} for i in ds.columns],
+        data=ds.to_dict('records'),
+    )
+
+])
+
+
+@app.callback(
+    Output('datatable-student', 'data'),
+    [Input('my-button', 'n_clicks'),
+     State('dropdown_name', 'value')])
+def display_table(n, name):
+    dff = ds[ds["Name"].isin(name)]
+    return dff.to_dict("records")
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
