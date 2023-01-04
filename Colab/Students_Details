@@ -1,0 +1,22 @@
+!pip install jupyter-dash
+!pip install dash-pivottable
+
+from jupyter_dash import JupyterDash
+from dash import Dash,  html
+import dash_pivottable
+import pandas as pd
+
+df = pd.DataFrame({'Name': ['Ram', 'Shyam', 'Mina', 'Sita', 'Geeta'],
+                   'Gender': ['Male', 'Male', 'Female', 'Female', 'Female'],
+                   'Degree': ['Masters', 'Graduate', 'Graduate', 'Masters', 'Graduate'],
+                   'Marks': [27, 23, 21, 23, 24]})
+
+app = JupyterDash(__name__)
+app.layout = html.Div(children=[
+    html.H1(children='Students Details', style={'padding-left': '30%', 'padding-top': '5px'}),
+    dash_pivottable.PivotTable(data=df.to_dict("records"), cols=["Degree", "Gender"], rows=["Name"], vals=["Marks"])
+     ])
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
