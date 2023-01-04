@@ -1,8 +1,6 @@
-
 !pip install jupyter-dash
-
 from jupyter_dash import JupyterDash
-from dash import Dash, dash_table, dcc, html, Input, Output, State
+from dash import Dash, dash_table, dcc, html, Input, Output,State
 import pandas as pd
 
 ds = pd.DataFrame({'Name': ['Ram', 'Shyam', 'Mina', 'Sita', 'Geeta'],
@@ -12,15 +10,22 @@ ds = pd.DataFrame({'Name': ['Ram', 'Shyam', 'Mina', 'Sita', 'Geeta'],
 
 app = JupyterDash(__name__)
 student_name = ds.Name.unique().tolist()
+degree_name = ds.Degree.unique().tolist()
 
 app.layout = html.Div(children=[
-    html.H1(children='Students details', style={'padding-left': '30%', 'padding-top': '5px'}),
+    html.H1(children='Students Details', style={'padding-left': '40%', 'padding-top': '5px'}),
 
     dcc.Dropdown(
         id='dropdown_name',
         options=[{'label': i, 'value': i} for i in student_name],
         placeholder="-Select a Student-",
         value=student_name, multi=True, clearable=True
+    ),
+    dcc.Dropdown(
+        id='dropdown_degree',
+        options=[{'label': i, 'value': i} for i in degree_name],
+        placeholder="-Select a Degree-",
+        value=degree_name, multi=True, clearable=True
     ),
     html.Button(id='my-button', n_clicks=0, children="Submit"),
 
@@ -37,10 +42,13 @@ app.layout = html.Div(children=[
 @app.callback(
     Output('datatable-student', 'data'),
     [Input('my-button', 'n_clicks'),
-     State('dropdown_name', 'value')])
-def display_table(n, name):
+     State('dropdown_name', 'value'),
+      State('dropdown_degree', 'value')])
+
+def display_table(n, name, degree):
     dff = ds[ds["Name"].isin(name)]
-    return dff.to_dict("records")
+    dfff = ds[ds["Degree"].isin(degree)]
+    return dfff.to_dict("records")
 
 
 if __name__ == '__main__':
