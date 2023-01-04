@@ -1,8 +1,5 @@
 
 !pip install jupyter-dash
-from jupyter_dash import JupyterDash
-from dash import Dash, dash_table, dcc, html, Input, Output, callback,State
-import pandas as pd
 
 from jupyter_dash import JupyterDash
 from dash import Dash, dash_table, dcc, html, Input, Output, State
